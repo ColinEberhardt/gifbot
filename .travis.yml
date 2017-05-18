@@ -1,3 +1,16 @@
 language: node_js
 node_js:
 - '6'
+deploy:
+- provider: lambda
+  function_name: gifbot
+  region: us-east-2
+  role: arn:aws:iam::462989979267:role/service-role/execute_my_lambda
+  runtime: nodejs6.10
+  handler_name: handler
+  access_key_id: AKIAJD3WVQTATNQACA6Q
+  timeout: 15
+  on:
+    branch: master
+  secret_access_key:
+    secure: J1XkG9r+EN95G2jE4MtykENs+zQvLfhey3JjdgErlAInkb/1/JohagFw3KPLND+inSm/lXbA+HBeWrZzFvwvt1pUNvQLr/mu9WdfJjrV5PtTG/Ctwj2ub1q6eApEHw3O/jA+hxlPOPuxP3paP7RIvzVBaMOXkvouHm0boqSswpWJ2ihz3i1uaZXcKqhAXmEw4fgKrRQE1QHyHY+RmQeI1bzJaADazcfzclmIi2iHRC0txaSqn3SXiN8QIxgmbIPHkAGTmTLXYnmVHnFJ6QfWMC35e8inR11I9P+zkC5r+GqyZ/njbnY2o5wyIssWy+KP4tKlUJOwmZq0DfolmZMgM4FtexHITkJZRmdMMGCfzW7tLRlswBvqj7H/gDSXJATUAt1IMn+d4q3nDxjKN7wbF8Un9q2nqzanKtSES/uTOc28je7nT45qBZVc7JefQCOS6WSAvoIylHhyxajficuS6b5gx5kmODp1h2V2Hs5IA1BXotZexXwsXyk6ZS81R1Aak8uRjUCenwygESRi1QuMOFinVn6b5VWUFkkds2vmE2U9//hQGB8zymBDYLBabnouzT84JYDBNDUsXN9pUf/zl5ral1yM4M/n5D0KuhLcNpM+pYWLCU/+ipOJKjLua/0+avsytjBtTf9Gc+pHmXbd6yvDOupze0cbFij5skUO+0Y=
