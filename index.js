@@ -36,20 +36,32 @@ Powered By Giphy and served up by your ever faithful @gifbot
 const noGifComment = (searchTerm) =>
   `Your faithful @gifbot is sorry to report that it couldn't find a gif for '${searchTerm}'`;
 
+const getCommentBody = (webhook) => {
+  if (webhook.comment) {
+    return webhook.comment.body;
+  } else if (webhook.issue) {
+    return webhook.issue.body;
+  }
+  return '';
+};
+
+const validAction = (action) =>
+  ['opened', 'created'].indexOf(action) !== -1;
+
 exports.handler = ({ body }, lambdaContext, callback) => {
   const loggingCallback = (err, message) => {
     console.log('callback', err, message);
     callback(err, message);
   };
 
-  if (body.action !== 'created') {
+  if (!validAction(body.action)) {
     loggingCallback(null, {'message': 'ignored action of type ' + body.action});
     return;
   }
 
   console.log(`Looking for gifbot tokens in comment ${body.issue.url}`);
 
-  const matches = regex.exec(body.comment.body);
+  const matches = regex.exec(getCommentBody(body));
   if (!matches) {
     loggingCallback(null, `The comment didn't summon the almighty gifbot`);
     return;
