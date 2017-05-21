@@ -1,2 +1,6 @@
 node_modules
 build
+
+# don't commit my secrets!
+gifbot-private-key.pem
+deploy.env

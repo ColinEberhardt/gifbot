@@ -1,11 +1,13 @@
 const requestp = require('./requestAsPromise');
+const installationToken = require('./installationToken');
 
 const addComment = (url, body, token) =>
   requestp({
     json: true,
     headers: {
       'Authorization': 'token ' + token,
-      'User-Agent': 'giphybot'
+      'User-Agent': 'ColinEberhardt',
+      'Accept': 'application/vnd.github.machine-man-preview+json'
     },
     method: 'POST',
     url,
@@ -24,13 +26,11 @@ const searchGifs = (searchTerm) =>
     }
   });
 
-const personalAccessToken = process.env.GITHUB_ACCESS_TOKEN;
-
 const regex = /\[gifbot:(.*?)\]/g;
 
 const createGifComment = (searchTerm, gifUrl) => `
 ![animated gif of ${searchTerm}](${gifUrl})
-Powered By Giphy and served up by your ever faithful @gifbot
+Powered By Giphy and served up by your ever faithful [gifbot](https://github.com/ColinEberhardt/gifbot)
 `;
 
 const noGifComment = (searchTerm) =>
@@ -41,6 +41,8 @@ const getCommentBody = (webhook) => {
     return webhook.comment.body;
   } else if (webhook.issue) {
     return webhook.issue.body;
+  } else if (webhook.pull_request) {
+    return webhook.pull_request.body;
   }
   return '';
 };
@@ -59,7 +61,9 @@ exports.handler = ({ body }, lambdaContext, callback) => {
     return;
   }
 
-  console.log(`Looking for gifbot tokens in comment ${body.issue.url}`);
+  const issueOrPull = body.issue ? body.issue : body.pull_request;
+
+  console.log(`Looking for gifbot tokens in comment ${issueOrPull.url}`);
 
   const matches = regex.exec(getCommentBody(body));
   if (!matches) {
@@ -75,7 +79,8 @@ exports.handler = ({ body }, lambdaContext, callback) => {
         const gifUrl = results.data[0].images.fixed_height.url;
         comment = createGifComment(searchTerm, gifUrl);
       }
-      return addComment(body.issue.comments_url, comment, personalAccessToken);
+      return installationToken(body.installation.id)
+       .then((token) => addComment(issueOrPull.comments_url, comment, token));
     })
     .then(() => loggingCallback(null, 'added comment'))
     .catch((err) => {

@@ -1,9 +1,9 @@
 const fs = require('fs');
 const jwt = require('jsonwebtoken');
 const requestp = require('./requestAsPromise');
-const integrationId = 2208;
+const integrationId = 2429;
 
-const cert = fs.readFileSync('clabot-integration-key.pem');
+const cert = fs.readFileSync('gifbot-private-key.pem');
 const token = jwt.sign({ iss: integrationId },
   cert, {
     algorithm: 'RS256',
@@ -15,7 +15,7 @@ module.exports = (installationId) => requestp({
   json: true,
   headers: {
     'Authorization': 'Bearer ' + token,
-    'User-Agent': 'github-cla-bot',
+    'User-Agent': 'ColinEberhardt',
     'Accept': 'application/vnd.github.machine-man-preview+json'
   },
   method: 'POST'
