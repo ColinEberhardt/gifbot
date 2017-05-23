@@ -6,6 +6,7 @@ module.exports = (opts) => new Promise((resolve, reject) => {
     if (error) {
       reject(error.toString());
     } else if (response && response.statusCode && !response.statusCode.toString().startsWith('2')) {
+      console.log(`HTTP status ${response.statusCode}`, body);
       reject(new Error(`API request ${opts.url} failed with status ${response.statusCode}`));
     } else {
       resolve(body);
